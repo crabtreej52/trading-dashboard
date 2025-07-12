@@ -7,18 +7,16 @@ from datetime import datetime
 from streamlit_autorefresh import st_autorefresh
 import time
 
-# Set refresh interval in seconds
-REFRESH_INTERVAL = 600  # 10 minutes
+import time
 
-# Auto-refresh using Streamlit built-in feature
+# Refresh interval in seconds
+REFRESH_INTERVAL = 600  # 10 minutes
 st_autorefresh(interval=REFRESH_INTERVAL * 1000, key="auto_refresh")
 
-# Optional: Live countdown
-placeholder = st.empty()
+# Show time until next refresh
 time_remaining = REFRESH_INTERVAL - (int(time.time()) % REFRESH_INTERVAL)
-for remaining in range(time_remaining, 0, -1):
-    placeholder.markdown(f"⏳ Refreshing in **{remaining}** seconds...")
-    time.sleep(1)
+st.markdown(f"⏳ Next refresh in **{time_remaining} seconds**")
+
 
 # Load .env if running locally
 load_dotenv()
