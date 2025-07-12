@@ -5,8 +5,6 @@ import streamlit as st
 from dotenv import load_dotenv
 from datetime import datetime
 
-
-
 # Load .env if running locally
 load_dotenv()
 
@@ -35,38 +33,27 @@ for symbol in symbols:
         df['MACD'] = df['EMA12'] - df['EMA26']
         df['Signal'] = df['MACD'].ewm(span=9, adjust=False).mean()
 
-        latest = df.dropna().iloc[-1]  # ensure we don't pick up NaNs
-
-        close = float(latest['Close'])
-        rsi = float(latest['RSI'])
-        macd = float(latest['MACD'])
-        signal = float(latest['Signal'])
+        latest = df.iloc[-1]
 
         col1, col2, col3, col4 = st.columns(4)
-        col1.metric("Close Price", f"{close:.2f}")
-        col2.metric("RSI", f"{rsi:.2f}")
-        col3.metric("MACD", f"{macd:.2f}")
-        col4.metric("MACD Signal", f"{signal:.2f}")
+        col1.metric("Close Price", f"{latest['Close']:.2f}")
+        col2.metric("RSI", f"{latest['RSI']:.2f}")
+        col3.metric("MACD", f"{latest['MACD']:.2f}")
+        col4.metric("MACD Signal", f"{latest['Signal']:.2f}")
 
         # Suggest action
-        if rsi < 40:
+        if latest['RSI'] < 40:
             suggestion = "✅ Buy"
             explanation = "RSI is low – may be oversold."
-        elif macd > signal:
+        elif latest['MACD'] > latest['Signal']:
             suggestion = "✅ Buy"
             explanation = "MACD crossed above signal."
         else:
             suggestion = "📦 Hold"
             explanation = "No clear signal."
 
-        st.markdown(f"**Your action for {symbol}:**")
-        st.radio(
-    "",
-    ["None", "✅ Buy", "📦 Hold", "❌ Skip"],
-    index=["✅ Buy", "📦 Hold", "❌ Skip"].index(suggestion),
-    key=f"action_{symbol}"
-)
-
+        st.markdown("**Your action for {}:**".format(symbol))
+        st.radio("", ["None", "✅ Buy", "📦 Hold", "❌ Skip"], index=["✅ Buy", "📦 Hold", "❌ Skip"].index(suggestion))
         st.caption(explanation)
 
     except Exception as e:
