@@ -35,17 +35,22 @@ for symbol in symbols:
 
         latest = df.iloc[-1]
 
+        close = float(latest['Close'])
+        rsi = float(latest['RSI'])
+        macd = float(latest['MACD'])
+        signal = float(latest['Signal'])
+
         col1, col2, col3, col4 = st.columns(4)
-        col1.metric("Close Price", f"{latest['Close']:.2f}")
-        col2.metric("RSI", f"{latest['RSI']:.2f}")
-        col3.metric("MACD", f"{latest['MACD']:.2f}")
-        col4.metric("MACD Signal", f"{latest['Signal']:.2f}")
+        col1.metric("Close Price", f"{close:.2f}")
+        col2.metric("RSI", f"{rsi:.2f}")
+        col3.metric("MACD", f"{macd:.2f}")
+        col4.metric("MACD Signal", f"{signal:.2f}")
 
         # Suggest action
-        if latest['RSI'] < 40:
+        if rsi < 40:
             suggestion = "✅ Buy"
             explanation = "RSI is low – may be oversold."
-        elif latest['MACD'] > latest['Signal']:
+        elif macd > signal:
             suggestion = "✅ Buy"
             explanation = "MACD crossed above signal."
         else:
@@ -53,7 +58,7 @@ for symbol in symbols:
             explanation = "No clear signal."
 
         st.markdown("**Your action for {}:**".format(symbol))
-        st.radio("", ["None", "✅ Buy", "📦 Hold", "❌ Skip"], index=["✅ Buy", "📦 Hold", "❌ Skip"].index(suggestion))
+        st.radio("", ["None", "✅ Buy", "📦 Hold", "❌ Skip"], index=["✅ Buy", "📦 Hold", "❌ Skip"].index(suggestion), key=symbol)
         st.caption(explanation)
 
     except Exception as e:
