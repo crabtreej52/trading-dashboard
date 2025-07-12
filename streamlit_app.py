@@ -58,7 +58,13 @@ for symbol in symbols:
             explanation = "No clear signal."
 
         st.markdown(f"**Your action for {symbol}:**")
-        st.radio("", ["None", "✅ Buy", "📦 Hold", "❌ Skip"], index=["✅ Buy", "📦 Hold", "❌ Skip"].index(suggestion))
+        st.radio(
+    "",
+    ["None", "✅ Buy", "📦 Hold", "❌ Skip"],
+    index=["✅ Buy", "📦 Hold", "❌ Skip"].index(suggestion),
+    key=f"action_{symbol}"
+)
+
         st.caption(explanation)
 
     except Exception as e:
