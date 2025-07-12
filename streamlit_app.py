@@ -33,26 +33,31 @@ for symbol in symbols:
         df['MACD'] = df['EMA12'] - df['EMA26']
         df['Signal'] = df['MACD'].ewm(span=9, adjust=False).mean()
 
-        latest = df.iloc[-1]
+        latest = df.dropna().iloc[-1]  # ensure we don't pick up NaNs
+
+        close = float(latest['Close'])
+        rsi = float(latest['RSI'])
+        macd = float(latest['MACD'])
+        signal = float(latest['Signal'])
 
         col1, col2, col3, col4 = st.columns(4)
-        col1.metric("Close Price", f"{latest['Close']:.2f}")
-        col2.metric("RSI", f"{latest['RSI']:.2f}")
-        col3.metric("MACD", f"{latest['MACD']:.2f}")
-        col4.metric("MACD Signal", f"{latest['Signal']:.2f}")
+        col1.metric("Close Price", f"{close:.2f}")
+        col2.metric("RSI", f"{rsi:.2f}")
+        col3.metric("MACD", f"{macd:.2f}")
+        col4.metric("MACD Signal", f"{signal:.2f}")
 
         # Suggest action
-        if latest['RSI'] < 40:
+        if rsi < 40:
             suggestion = "✅ Buy"
             explanation = "RSI is low – may be oversold."
-        elif latest['MACD'] > latest['Signal']:
+        elif macd > signal:
             suggestion = "✅ Buy"
             explanation = "MACD crossed above signal."
         else:
             suggestion = "📦 Hold"
             explanation = "No clear signal."
 
-        st.markdown("**Your action for {}:**".format(symbol))
+        st.markdown(f"**Your action for {symbol}:**")
         st.radio("", ["None", "✅ Buy", "📦 Hold", "❌ Skip"], index=["✅ Buy", "📦 Hold", "❌ Skip"].index(suggestion))
         st.caption(explanation)
 
