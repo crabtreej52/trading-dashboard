@@ -7,7 +7,7 @@ from datetime import datetime
 from streamlit_autorefresh import st_autorefresh
 
 # Auto-refresh every 10 minutes (600,000 ms)
-st_autorefresh(interval=600000, key="auto_refresh")
+st_autorefresh(interval=5000, key="auto_refresh")
 
 # Load .env if running locally
 load_dotenv()
