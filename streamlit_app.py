@@ -6,10 +6,8 @@ from dotenv import load_dotenv
 from datetime import datetime
 from streamlit_autorefresh import st_autorefresh
 
-# Auto-refresh every 10 minutes (600,000 ms)
-st_autorefresh(interval=5000, key="auto_refresh")
-# Auto-refresh every 10 minutes
-REFRESH_INTERVAL = 15  # in seconds (600s = 10 minutes)
+# Auto-refresh every 5 seconds (for quick testing)
+REFRESH_INTERVAL = 5
 st_autorefresh(interval=REFRESH_INTERVAL * 1000, key="auto_refresh")
 
 # Countdown display
