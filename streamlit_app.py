@@ -1,0 +1,62 @@
+import os
+import pandas as pd
+import yfinance as yf
+import streamlit as st
+from dotenv import load_dotenv
+from datetime import datetime
+
+# Load .env if running locally
+load_dotenv()
+
+st.set_page_config(page_title="📈 My Personal Trading Assistant")
+st.title("📈 My Personal Trading Assistant")
+
+symbols = ["EAT", "CART", "LLOY.L"]
+
+for symbol in symbols:
+    st.subheader(symbol)
+    try:
+        df = yf.download(symbol, period="3mo")
+        if df.empty:
+            raise Exception("No data returned")
+
+        df['Change'] = df['Close'].diff()
+        df['Gain'] = df['Change'].apply(lambda x: x if x > 0 else 0)
+        df['Loss'] = df['Change'].apply(lambda x: -x if x < 0 else 0)
+        avg_gain = df['Gain'].rolling(window=14).mean()
+        avg_loss = df['Loss'].rolling(window=14).mean()
+        rs = avg_gain / avg_loss
+        df['RSI'] = 100 - (100 / (1 + rs))
+
+        df['EMA12'] = df['Close'].ewm(span=12, adjust=False).mean()
+        df['EMA26'] = df['Close'].ewm(span=26, adjust=False).mean()
+        df['MACD'] = df['EMA12'] - df['EMA26']
+        df['Signal'] = df['MACD'].ewm(span=9, adjust=False).mean()
+
+        latest = df.iloc[-1]
+
+        col1, col2, col3, col4 = st.columns(4)
+        col1.metric("Close Price", f"{latest['Close']:.2f}")
+        col2.metric("RSI", f"{latest['RSI']:.2f}")
+        col3.metric("MACD", f"{latest['MACD']:.2f}")
+        col4.metric("MACD Signal", f"{latest['Signal']:.2f}")
+
+        # Suggest action
+        if latest['RSI'] < 40:
+            suggestion = "✅ Buy"
+            explanation = "RSI is low – may be oversold."
+        elif latest['MACD'] > latest['Signal']:
+            suggestion = "✅ Buy"
+            explanation = "MACD crossed above signal."
+        else:
+            suggestion = "📦 Hold"
+            explanation = "No clear signal."
+
+        st.markdown("**Your action for {}:**".format(symbol))
+        st.radio("", ["None", "✅ Buy", "📦 Hold", "❌ Skip"], index=["✅ Buy", "📦 Hold", "❌ Skip"].index(suggestion))
+        st.caption(explanation)
+
+    except Exception as e:
+        st.error(f"Error loading data for {symbol}: {e}")
+
+    st.markdown("---")
