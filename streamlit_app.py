@@ -8,6 +8,13 @@ from streamlit_autorefresh import st_autorefresh
 
 # Auto-refresh every 10 minutes (600,000 ms)
 st_autorefresh(interval=5000, key="auto_refresh")
+# Auto-refresh every 10 minutes
+REFRESH_INTERVAL = 15  # in seconds (600s = 10 minutes)
+st_autorefresh(interval=REFRESH_INTERVAL * 1000, key="auto_refresh")
+
+# Countdown display
+time_remaining = REFRESH_INTERVAL - (int(time.time()) % REFRESH_INTERVAL)
+st.info(f"🔄 Refreshing in: {time_remaining} seconds")
 
 # Load .env if running locally
 load_dotenv()
