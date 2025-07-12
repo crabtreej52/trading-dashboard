@@ -5,6 +5,7 @@ import streamlit as st
 from dotenv import load_dotenv
 from datetime import datetime
 from streamlit_autorefresh import st_autorefresh
+import time
 
 # Auto-refresh every 5 seconds (for quick testing)
 REFRESH_INTERVAL = 5
