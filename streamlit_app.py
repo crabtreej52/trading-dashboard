@@ -5,25 +5,7 @@ import streamlit as st
 from dotenv import load_dotenv
 from datetime import datetime
 from streamlit_autorefresh import st_autorefresh
-import time
 
-import time
-
-# Refresh interval in seconds
-REFRESH_INTERVAL = 600  # 10 minutes
-st_autorefresh(interval=REFRESH_INTERVAL * 1000, key="auto_refresh")
-
-# Show time until next refresh
-time_remaining = REFRESH_INTERVAL - (int(time.time()) % REFRESH_INTERVAL)
-st.markdown(f"⏳ Next refresh in **{time_remaining} seconds**")
-
-
-# Optional: Live countdown
-placeholder = st.empty()
-time_remaining = REFRESH_INTERVAL - (int(time.time()) % REFRESH_INTERVAL)
-for remaining in range(time_remaining, 0, -1):
-    placeholder.markdown(f"⏳ Refreshing in **{remaining}** seconds...")
-    time.sleep(1)
 
 # Load .env if running locally
 load_dotenv()
