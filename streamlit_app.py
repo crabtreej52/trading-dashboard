@@ -18,6 +18,13 @@ time_remaining = REFRESH_INTERVAL - (int(time.time()) % REFRESH_INTERVAL)
 st.markdown(f"⏳ Next refresh in **{time_remaining} seconds**")
 
 
+# Optional: Live countdown
+placeholder = st.empty()
+time_remaining = REFRESH_INTERVAL - (int(time.time()) % REFRESH_INTERVAL)
+for remaining in range(time_remaining, 0, -1):
+    placeholder.markdown(f"⏳ Refreshing in **{remaining}** seconds...")
+    time.sleep(1)
+
 # Load .env if running locally
 load_dotenv()
 
